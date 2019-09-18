@@ -1,7 +1,0 @@
-Equipo1:
-Robert,Mshvidobadze,30
-Idalys,Ortiz,29
-Amiran,Papinashvili,31
-Daria,Bilodid,18
-Lukhumi,Chkhvimiani,26
-Madeleine,Malonga,25
