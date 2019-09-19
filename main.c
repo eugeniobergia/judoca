@@ -15,6 +15,10 @@ int comparar_judoca(void *dato1, void *dato2) {
     return (((Judoca)dato1) -> edad < ((Judoca)dato2) -> edad);
 }
 
+int comparar_pareja(void *dato1, void *dato2) {
+    return (((Pareja)dato1) -> estadoPareja < ((Pareja)dato2) -> estadoPareja);
+}
+
 Arbol nuevo_nodo(Arbol arbol, void *dato, Comparar c) {
     if(!arbol) {
         arbol = malloc(sizeof(TNodo));
@@ -39,41 +43,49 @@ Arbol mayor_de_menores(Arbol arbol){
   	}
 }
 
-Arbol eliminar_nodo(Arbol arbol, void *dato, Comparar c) {
+void destruir_judoca(Judoca judoca) {
+    free(judoca -> nombre);
+    free(judoca -> apellido);
+    free(judoca);
+}
+
+Arbol eliminar_nodo(Arbol arbol, void *dato, Comparar c, Destruir d) {
 	if (!arbol) return NULL;
 	if (arbol -> dato != dato) {
 		if (c(arbol -> dato, dato))
-			arbol -> der = eliminar_nodo(arbol -> der, dato, c);
+			arbol -> der = eliminar_nodo(arbol -> der, dato, c, d);
     	else
-    		arbol -> izq = eliminar_nodo(arbol -> izq, dato, c);
+    		arbol -> izq = eliminar_nodo(arbol -> izq, dato, c, d);
   	} else {
   		if (!(arbol -> izq) && !(arbol -> der))	{
+            d(arbol -> dato);
   			free(arbol);
   			return NULL;
   		} else if (!(arbol -> izq) || !(arbol -> der)) {
   			Arbol nodo = !(arbol -> izq) ? arbol -> der : arbol -> izq;
+            d(arbol -> dato);
   			free(arbol);
   			return nodo;
   		} else {
   			Arbol nodo = mayor_de_menores(arbol);
   			arbol -> dato = nodo -> dato;
-  			arbol -> izq = eliminar_nodo(arbol -> izq, nodo -> dato, c);
+  			arbol -> izq = eliminar_nodo(arbol -> izq, nodo -> dato, c, d);
   		}
   	}
   	return arbol;
 }
 
 Judoca crear_judoca(char nombre[], char apellido[], int edad) {
-  Judoca nuevo_judoca = malloc(sizeof(_Judoca));
-  nuevo_judoca -> nombre = malloc(sizeof(char) * strlen(nombre) + 1);
-  nuevo_judoca -> apellido = malloc(sizeof(char) * strlen(apellido) + 1);
+    Judoca nuevo_judoca = malloc(sizeof(_Judoca));
+    nuevo_judoca -> nombre = malloc(sizeof(char) * strlen(nombre) + 1);
+    nuevo_judoca -> apellido = malloc(sizeof(char) * strlen(apellido) + 1);
 
-  strcpy(nuevo_judoca -> nombre, nombre);
-  strcpy(nuevo_judoca -> apellido, apellido);
-  nuevo_judoca -> edad = edad;
-  nuevo_judoca -> emparejado = 0;
+    strcpy(nuevo_judoca -> nombre, nombre);
+    strcpy(nuevo_judoca -> apellido, apellido);
+    nuevo_judoca -> edad = edad;
+    nuevo_judoca -> emparejado = 0;
 
-  return nuevo_judoca;
+    return nuevo_judoca;
 }
 
 Arbol ingresar_equipo1(Arbol equipo1, FILE *entrada) {
@@ -83,7 +95,7 @@ Arbol ingresar_equipo1(Arbol equipo1, FILE *entrada) {
     fgetc(entrada);
     for(correcto = 1; correcto;) {
         fscanf(entrada, "%[^,\n]", nombre);
-        if(strcmp(nombre, "Equipo2:") != 0) {
+        if(strcmp(nombre, "Equipo2:")) {
             fscanf(entrada, ",%[^,],%d", apellido, &edad);
             fgetc(entrada);
 
@@ -153,7 +165,24 @@ int pareja_valida(Judoca judoca1, Judoca judoca2) {
     return 0;
 }
 
+Pareja crear_pareja(Judoca participante1, Judoca participante2, int estadoPareja) {
+    Pareja nueva_pareja = malloc(sizeof(_Pareja));
+    nueva_pareja -> participante1 = participante1;
+    nueva_pareja -> participante2 = participante2;
+    nueva_pareja -> estadoPareja = estadoPareja;
+    return nueva_pareja;
+}
 
+/*Arbol emparejar(Arbol equipo1, Arbol equipo2, Arbol parejas, Comparar c){
+    if(!(equipo1 -> ((Judoca)dato) -> emparejado)) {
+        if(!(equipo2 -> ((Judoca)dato) -> emparejado)) {
+            if(!pareja_valida(equipo1 -> dato, equipo2 -> dato)){
+
+
+            }
+        }
+    }
+}*/
 
 int main(int argc, char **argv) {
     if(argc != 3) {
@@ -169,9 +198,10 @@ int main(int argc, char **argv) {
     equipo1 = ingresar_equipo1(equipo1, entrada);
     equipo2 = ingresar_equipo2(equipo2, entrada);
 
-    Arbol parejas;
-    for(;equipo1;)
-        parejas = emparejar(&equipo1, &equipo2, parejas);
+    Arbol parejas = NULL;
+    for(;equipo1 || equipo2;) {
+        parejas = emparejar(equipo1, equipo2, parejas, comparar_pareja);
+    }
 
     return 0;
 }
