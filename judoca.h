@@ -5,7 +5,7 @@
 
 typedef struct {
     char *nombre, *apellido;
-    int edad, emparejado;
+    int edad;
 } _Judoca;
 
 typedef _Judoca* Judoca;

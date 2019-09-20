@@ -43,34 +43,32 @@ Arbol mayor_de_menores(Arbol arbol){
   	}
 }
 
-void destruir_judoca(Judoca judoca) {
-    free(judoca -> nombre);
-    free(judoca -> apellido);
-    free(judoca);
+void destruir_judoca(void *judoca) {
+    free(((Judoca)judoca) -> nombre);
+    free(((Judoca)judoca) -> apellido);
+    free(((Judoca)judoca));
 }
 
 Arbol eliminar_nodo(Arbol arbol, void *dato, Comparar c, Destruir d) {
 	if (!arbol) return NULL;
 	if (arbol -> dato != dato) {
-		if (c(arbol -> dato, dato))
-			arbol -> der = eliminar_nodo(arbol -> der, dato, c, d);
+      if (c(arbol -> dato, dato))
+          arbol -> der = eliminar_nodo(arbol -> der, dato, c, d);
     	else
-    		arbol -> izq = eliminar_nodo(arbol -> izq, dato, c, d);
-  	} else {
-  		if (!(arbol -> izq) && !(arbol -> der))	{
-            d(arbol -> dato);
-  			free(arbol);
-  			return NULL;
-  		} else if (!(arbol -> izq) || !(arbol -> der)) {
-  			Arbol nodo = !(arbol -> izq) ? arbol -> der : arbol -> izq;
-            d(arbol -> dato);
-  			free(arbol);
-  			return nodo;
-  		} else {
-  			Arbol nodo = mayor_de_menores(arbol);
-  			arbol -> dato = nodo -> dato;
-  			arbol -> izq = eliminar_nodo(arbol -> izq, nodo -> dato, c, d);
-  		}
+          arbol -> izq = eliminar_nodo(arbol -> izq, dato, c, d);
+      } else {
+          if (!(arbol -> izq) && !(arbol -> der))	{
+              free(arbol);
+              return NULL;
+      		} else if (!(arbol -> izq) || !(arbol -> der)) {
+              Arbol nodo = !(arbol -> izq) ? arbol -> der : arbol -> izq;
+              free(arbol);
+              return nodo;
+      		} else {
+              Arbol nodo = mayor_de_menores(arbol);
+              arbol -> dato = nodo -> dato;
+              arbol -> izq = eliminar_nodo(arbol -> izq, nodo -> dato, c, d);
+      		}
   	}
   	return arbol;
 }
@@ -83,7 +81,6 @@ Judoca crear_judoca(char nombre[], char apellido[], int edad) {
     strcpy(nuevo_judoca -> nombre, nombre);
     strcpy(nuevo_judoca -> apellido, apellido);
     nuevo_judoca -> edad = edad;
-    nuevo_judoca -> emparejado = 0;
 
     return nuevo_judoca;
 }
@@ -124,14 +121,21 @@ Arbol ingresar_equipo2(Arbol equipo2, FILE *entrada) {
 }
 
 void mostrar_judoca(void *dato) {
-    printf("%s, ", ((Judoca)dato) -> nombre);
-    printf("%s, ", ((Judoca)dato) -> apellido);
-    printf("%d\n", ((Judoca)dato) -> edad);
+    printf("%s,", ((Judoca)dato) -> nombre);
+    printf("%s,", ((Judoca)dato) -> apellido);
+    printf("%d", ((Judoca)dato) -> edad);
+}
+
+void mostrar_pareja(void *dato) {
+    mostrar_judoca(((Pareja)dato) -> participante1);
+    printf(" - ");
+    mostrar_judoca(((Pareja)dato) -> participante2);
 }
 
 void mostrar(Arbol equipo, Mostrar m) {
     if(equipo) {
         m(equipo -> dato);
+        printf("\n");
         mostrar(equipo -> izq, m);
         mostrar(equipo -> der, m);
     }
@@ -173,16 +177,15 @@ Pareja crear_pareja(Judoca participante1, Judoca participante2, int estadoPareja
     return nueva_pareja;
 }
 
-/*Arbol emparejar(Arbol equipo1, Arbol equipo2, Arbol parejas, Comparar c){
-    if(!(equipo1 -> ((Judoca)dato) -> emparejado)) {
-        if(!(equipo2 -> ((Judoca)dato) -> emparejado)) {
-            if(!pareja_valida(equipo1 -> dato, equipo2 -> dato)){
+Arbol emparejar(Arbol *equipo1, Arbol *equipo2, Arbol parejas) {
+    int estado_pareja = pareja_valida((*equipo1) -> dato, (*equipo2) -> dato);
+    Pareja nueva_pareja = crear_pareja((*equipo1) -> dato, (*equipo2) -> dato, estado_pareja);
+    parejas = nuevo_nodo(parejas, nueva_pareja, comparar_pareja);
+    (*equipo1) = eliminar_nodo((*equipo1), (*equipo1) -> dato, comparar_judoca, destruir_judoca);
+    (*equipo2) = eliminar_nodo((*equipo2), (*equipo2) -> dato, comparar_judoca, destruir_judoca);
+    return parejas;
 
-
-            }
-        }
-    }
-}*/
+}
 
 int main(int argc, char **argv) {
     if(argc != 3) {
@@ -199,9 +202,10 @@ int main(int argc, char **argv) {
     equipo2 = ingresar_equipo2(equipo2, entrada);
 
     Arbol parejas = NULL;
-    for(;equipo1 || equipo2;) {
-        parejas = emparejar(equipo1, equipo2, parejas, comparar_pareja);
-    }
+    for(int i = 0; equipo1 && equipo2; i++)
+        parejas = emparejar(&equipo1, &equipo2, parejas);
+
+    mostrar(parejas, mostrar_pareja);
 
     return 0;
 }
