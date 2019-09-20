@@ -1,0 +1,6 @@
+Daria,Bilodid,18 - Uta,Abe,19 - Pareja valida
+Madeleine,Malonga,25 - Tsukasa,Yoshida,23 - Pareja valida
+Amiran,Papinashvili,31 - Sharafuddin,Lutfillaev,28 - Pareja de mayores con diferencia mayor a 2 años
+Lukhumi,Chkhvimiani,26 - Ryuju,Nagayama,23 - Pareja de mayores con diferencia mayor a 2 años
+Idalys,Ortiz,29 - Naohisa,Takato,26 - Pareja de mayores con diferencia mayor a 2 años
+Robert,Mshvidobadze,30 - Clarisse,Agbegnenou,26 - Pareja de mayores con diferencia mayor a 2 años
