@@ -1,3 +1,4 @@
+Las parejas formadas son las siguientes:
 Daria,Bilodid,18 - Uta,Abe,19 - Pareja valida
 Madeleine,Malonga,25 - Tsukasa,Yoshida,23 - Pareja valida
 Amiran,Papinashvili,31 - Sharafuddin,Lutfillaev,28 - Pareja de mayores con diferencia mayor a 2 años

@@ -12,4 +12,3 @@ Tsukasa,Yoshida,23
 Sharafuddin,Lutfillaev,28
 Uta,Abe,19
 Naohisa,Takato,26
-
