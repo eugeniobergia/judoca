@@ -34,9 +34,9 @@ int main(int argc, char **argv) {
         imprimir_salida(equipo2, salida, imprimir_judoca);
     }
 
-    destruir_arbol(equipo1, destruir_judoca);
-    destruir_arbol(equipo2, destruir_judoca);
-    destruir_arbol(parejas, destruir_pareja);
+    equipo1 = destruir_arbol(equipo1, destruir_judoca);
+    equipo2 = destruir_arbol(equipo2, destruir_judoca);
+    parejas = destruir_arbol(parejas, destruir_pareja);
 
     return 0;
 }
