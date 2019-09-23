@@ -26,7 +26,7 @@ Arbol nuevo_nodo(Arbol arbol, void *dato, Comparar c) {
         arbol -> izq = NULL;
         arbol -> der = NULL;
     } else {
-        if(c(arbol -> dato, dato) < 0)
+        if(c(arbol -> dato, dato) < 0) // Comparo los datos y me fijo si el pimero es menor al segundo
             arbol -> der = nuevo_nodo(arbol -> der, dato, c);
         else arbol -> izq = nuevo_nodo(arbol -> izq, dato, c);
     }
@@ -45,8 +45,8 @@ Arbol mayor_de_menores(Arbol arbol){
 
 Arbol eliminar_nodo(Arbol arbol, void *dato, Comparar c) {
 	if (!arbol) return NULL;
-	if (c(arbol -> dato, dato) != 0) {
-      if (c(arbol -> dato, dato) < 0)
+	if (c(arbol -> dato, dato) != 0) { // Comparo los datos y me fijo si son diferentes
+      if (c(arbol -> dato, dato) < 0) // Comparo los datos y me fijo si el pimero es menor al segundo
           arbol -> der = eliminar_nodo(arbol -> der, dato, c);
     	else
           arbol -> izq = eliminar_nodo(arbol -> izq, dato, c);
@@ -82,11 +82,11 @@ Judoca crear_judoca(char nombre[], char apellido[], int edad) {
 Arbol ingresar_equipo1(Arbol equipo1, FILE *entrada) {
     char basura[16], nombre[32], apellido[32];
     int edad, correcto;
-    fscanf(entrada, "%s", basura);
+    fscanf(entrada, "%s", basura); // Lee la palabra "Equipo1"
     fgetc(entrada);
     for(correcto = 1; correcto;) {
-        fscanf(entrada, "%[^,\n]", nombre);
-        if(strcmp(nombre, "Equipo2:")) {
+        fscanf(entrada, "%[^,\n]", nombre); // Lee hasta que encuentra una coma o un salto de linea
+        if(strcmp(nombre, "Equipo2:")) { // Si lee la palabra "Equipo2:" es porque ya termino de leer el equipo 1
             fscanf(entrada, ",%[^,],%d", apellido, &edad);
             fgetc(entrada);
 
@@ -103,7 +103,7 @@ Arbol ingresar_equipo2(Arbol equipo2, FILE *entrada) {
     char nombre[32], apellido[32];
     int edad, correcto;
     for(correcto = 1; correcto;) {
-        if(fscanf(entrada, "%[^,],%[^,],%d", nombre, apellido, &edad) == 3) {
+        if(fscanf(entrada, "%[^,],%[^,],%d", nombre, apellido, &edad) == 3) { // Continua mientras lea correctamente 3 variables
             fgetc(entrada);
 
             Judoca nuevo_judoca = crear_judoca(nombre, apellido, edad);
@@ -128,7 +128,7 @@ void mostrar_pareja(void *dato) {
 
 void mostrar(Arbol equipo, Mostrar m) {
     if(equipo) {
-        m(equipo -> dato);
+        m(equipo -> dato); // Muestro el dato
         printf("\n");
         mostrar(equipo -> izq, m);
         mostrar(equipo -> der, m);
@@ -201,7 +201,7 @@ void imprimir_pareja(void *dato, FILE *salida) {
 void imprimir_salida(Arbol arbol, FILE *salida, Imprimir i) {
     if(arbol) {
         imprimir_salida(arbol -> izq, salida, i);
-        i(arbol -> dato, salida);
+        i(arbol -> dato, salida); // Escribo el dato en el archivo de salida
         fprintf(salida, "\n");
         imprimir_salida(arbol -> der, salida, i);
     }
@@ -223,8 +223,8 @@ Arbol destruir_arbol(Arbol arbol, Destruir d) {
     if(arbol) {
         arbol -> izq = destruir_arbol(arbol -> izq, d);
         arbol -> der = destruir_arbol(arbol -> der, d);
-        d(arbol -> dato);
+        d(arbol -> dato); // Libero el dato
         free(arbol);
     }
-    return NULL;
+    return NULL; // Retorno NULL para que no quede apuntando a basura
 }
