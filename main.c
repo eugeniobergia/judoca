@@ -37,6 +37,8 @@ int main(int argc, char **argv) {
     equipo1 = destruir_arbol(equipo1, destruir_judoca);
     equipo2 = destruir_arbol(equipo2, destruir_judoca);
     parejas = destruir_arbol(parejas, destruir_pareja);
+    fclose(entrada);
+    fclose(salida);
 
     return 0;
 }

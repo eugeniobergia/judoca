@@ -214,6 +214,8 @@ void destruir_judoca(void *judoca) {
 }
 
 void destruir_pareja(void *pareja) {
+    destruir_judoca(((Pareja)pareja) -> participante1);
+    destruir_judoca(((Pareja)pareja) -> participante2);
     free(((Pareja)pareja));
 }
 
